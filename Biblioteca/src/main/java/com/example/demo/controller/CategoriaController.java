@@ -1,57 +1,47 @@
 package com.example.demo.controller;
 
+import com.example.biblioteca.model.Categoria;
+import com.example.biblioteca.repository.CategoriaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.example.demo.entities.Categoria;
-import com.example.demo.services.CategoriaService;
-
-
 @RestController
-@RequestMapping("/categoria")
+@RequestMapping("/api/categorias")
 public class CategoriaController {
-	@Autowired
-	private final CategoriaService categoriaService;
 
-	public CategoriaController(CategoriaService categoriaService) {
-		this.categoriaService = categoriaService;
-	}
+    @Autowired
+    private CategoriaRepository categoriaRepository;
 
-	@PostMapping
-	public Categoria createCategoria(@RequestBody Categoria categoria) {
-		return categoriaService.saveCategoria(categoria);
+    @GetMapping
+    public List<Categoria> getAllCategorias() {
+        return categoriaRepository.findAll();
+    }
 
-	}
+    @GetMapping("/{id}")
+    public Categoria getCategoriaById(@PathVariable Integer id) {
+        return categoriaRepository.findById(id).orElse(null);
+    }
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Categoria> getCategoria(@PathVariable Long id) {
-		Categoria categoria = categoriaService.getCategoriaById(id);
-		if (categoria != null) {
-			return ResponseEntity.ok(categoria);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+    @PostMapping
+    public Categoria createCategoria(@RequestBody Categoria categoria) {
+        return categoriaRepository.save(categoria);
+    }
 
-	}
-	
-	@DeleteMapping("/{id}")
-	public void deleteCategoria(@PathVariable Long id) {
-		categoriaService.deleteCategoria(id);
-	}
+    @PutMapping("/{id}")
+    public Categoria updateCategoria(@PathVariable Integer id, @RequestBody Categoria categoriaDetails) {
+        Categoria categoria = categoriaRepository.findById(id).orElse(null);
+        if (categoria != null) {
+            categoria.setNome(categoriaDetails.getNome());
+            categoria.setDescricao(categoriaDetails.getDescricao());
+            return categoriaRepository.save(categoria);
+        }
+        return null;
+    }
 
-	@GetMapping("/nome/{nome}")
-	public List<Categoria> buscarPorNome(@PathVariable String nome){
-		return categoriaService.buscarPorNome(nome);
-	}
-
-
+    @DeleteMapping("/{id}")
+    public void deleteCategoria(@PathVariable Integer id) {
+        categoriaRepository.deleteById(id);
+    }
 }
