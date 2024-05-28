@@ -1,59 +1,50 @@
 package com.example.demo.controller;
 
+
+package com.example.biblioteca.controller;
+
+import com.example.biblioteca.model.Autor;
+import com.example.biblioteca.repository.AutorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.example.demo.entities.Autor;
-import com.example.demo.services.AutorService;
-
-
-
-
 @RestController
-@RequestMapping("/autor")
+@RequestMapping("/api/autores")
 public class AutorController {
-	@Autowired
-	private final AutorService autorService;
 
-	public AutorController(AutorService autorService) {
-		this.autorService = autorService;
-	}
+    @Autowired
+    private AutorRepository autorRepository;
 
-	@PostMapping
-	public Autor createautor(@RequestBody Autor autor) {
-		return autorService.saveAutor(autor);
+    @GetMapping
+    public List<Autor> getAllAutores() {
+        return autorRepository.findAll();
+    }
 
-	}
+    @GetMapping("/{id}")
+    public Autor getAutorById(@PathVariable Integer id) {
+        return autorRepository.findById(id).orElse(null);
+    }
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Autor> getautor(@PathVariable Long id) {
-		Autor autor = autorService.getCAutorById(id);
-		if (autor != null) {
-			return ResponseEntity.ok(autor);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+    @PostMapping
+    public Autor createAutor(@RequestBody Autor autor) {
+        return autorRepository.save(autor);
+    }
 
-	}
-	
-	@DeleteMapping("/{id}")
-	public void deleteAutor(@PathVariable Long id) {
-		autorService.deleteAutor(id);
-	}
+    @PutMapping("/{id}")
+    public Autor updateAutor(@PathVariable Integer id, @RequestBody Autor autorDetails) {
+        Autor autor = autorRepository.findById(id).orElse(null);
+        if (autor != null) {
+            autor.setNome(autorDetails.getNome());
+            autor.setPais(autorDetails.getPais());
+            return autorRepository.save(autor);
+        }
+        return null;
+    }
 
-	@GetMapping("/nome/{nome}")
-	public List<Autor> buscarPorNome(@PathVariable String nome){
-		return autorService.buscarPorNome(nome);
-	}
-
-
+    @DeleteMapping("/{id}")
+    public void deleteAutor(@PathVariable Integer id) {
+        autorRepository.deleteById(id);
+    }
 }
