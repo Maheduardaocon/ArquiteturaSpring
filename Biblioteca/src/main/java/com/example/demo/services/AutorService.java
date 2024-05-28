@@ -1,42 +1,50 @@
 package com.example.demo.services;
 
+
+	package com.example.biblioteca.controller;
+
+import com.example.biblioteca.model.Autor;
+import com.example.biblioteca.repository.AutorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
+@RestController
+@RequestMapping("/api/autores")
+public class AutorController {
 
-import org.springframework.stereotype.Service;
+    @Autowired
+    private AutorRepository autorRepository;
 
-import com.example.demo.entities.Autor;
-import com.example.demo.repositories.AutorRepository;
+    @GetMapping
+    public List<Autor> getAllAutores() {
+        return autorRepository.findAll();
+    }
 
+    @GetMapping("/{id}")
+    public Autor getAutorById(@PathVariable Integer id) {
+        return autorRepository.findById(id).orElse(null);
+    }
 
-@Service
-public class AutorService {
-	private final AutorRepository autorRepository;
+    @PostMapping
+    public Autor createAutor(@RequestBody Autor autor) {
+        return autorRepository.save(autor);
+    }
 
+    @PutMapping("/{id}")
+    public Autor updateAutor(@PathVariable Integer id, @RequestBody Autor autorDetails) {
+        Autor autor = autorRepository.findById(id).orElse(null);
+        if (autor != null) {
+            autor.setNome(autorDetails.getNome());
+            autor.setPais(autorDetails.getPais());
+            return autorRepository.save(autor);
+        }
+        return null;
+    }
 
-	public AutorService(AutorRepository autorRepository) {
-		this.autorRepository = autorRepository;
-	}
-
-	public Autor saveAutor(Autor autor) {
-		return autorRepository.save(autor);
-	}
-
-	public List<Autor> getAllCAutor() {
-		return autorRepository.findAll();
-	}
-
-	public Autor getCAutorById(Long id) {
-		return autorRepository.findById(id).orElse(null);
-
-	}
-
-	public void deleteAutor(long id) {
-		autorRepository.deleteById(id);
-
-	}
-		public List<Autor> buscarPorNome( String nome){
-		return autorRepository.buscarPorNome(nome);
-		}		
-
+    @DeleteMapping("/{id}")
+    public void deleteAutor(@PathVariable Integer id) {
+        autorRepository.deleteById(id);
+    }
 }
