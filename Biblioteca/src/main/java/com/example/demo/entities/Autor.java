@@ -8,35 +8,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Autor")
-public class Autor {
+@Data
+public class Livro {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idLivro;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	@Column
-	private String nome;
-	@Column
-	private String pais;
-	@Column
-	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getNome() {
-		return nome;
-	}
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-	public String getPais() {
-		return pais;
-	}
-	public void setPais(String pais) {
-		this.pais = pais;
-	}
+    private String titulo;
+    private String ano;
+
+    @ManyToOne
+    @JoinColumn(name = "idAutor", nullable = false)
+    private Autor autor;
+
+    @ManyToOne
+    @JoinColumn(name = "idCategoria", nullable = false)
+    private Categoria categoria;
+}
 	
 }
