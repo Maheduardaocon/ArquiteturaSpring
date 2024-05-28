@@ -1,57 +1,56 @@
 package com.example.demo.controller;
 
+import com.example.biblioteca.model.Livro;
+import com.example.biblioteca.repository.LivroRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.example.demo.entities.Livro;
-import com.example.demo.services.LivroService;
-
-
 @RestController
-@RequestMapping("/livro")
+@RequestMapping("/api/livros")
 public class LivroController {
-	@Autowired
-	private final LivroService livroService;
 
-	public LivroController(LivroService livroService) {
-		this.livroService = livroService;
-	}
+    @Autowired
+    private LivroRepository livroRepository;
 
-	@PostMapping
-	public Livro createlivro(@RequestBody Livro livro) {
-		return livroService.saveLivro(livro);
+    @GetMapping
+    public List<Livro> getAllLivros() {
+        return livroRepository.findAll();
+    }
 
-	}
+    @GetMapping("/autor/{nome}")
+    public List<Livro> getLivrosByAutor(@PathVariable String nome) {
+        return livroRepository.findByAutorNome(nome);
+    }
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Livro> getlivro(@PathVariable Long id) {
-		Livro livro = livroService.getLivroById(id);
-		if (livro != null) {
-			return ResponseEntity.ok(livro);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+    @PostMapping
+    public Livro createLivro(@RequestBody Livro livro) {
+        return livroRepository.save(livro);
+    }
 
-	}
-	
-	@DeleteMapping("/{id}")
-	public void deletelivro(@PathVariable Long id) {
-		livroService.deleteLivro(id);
-	}
+    @GetMapping("/{id}")
+    public Livro getLivroById(@PathVariable Integer id) {
+        return livroRepository.findById(id).orElse(null);
+    }
 
-	@GetMapping("/titulo/{titulo}")
-	public List<Livro> buscarPorTitulo(@PathVariable String titulo){
-		return livroService.buscarPorTitulo(titulo);
-	}
+    @PutMapping("/{id}")
+    public Livro updateLivro(@PathVariable Integer id, @RequestBody Livro livroDetails) {
+        Livro livro = livroRepository.findById(id).orElse(null);
+        if (livro != null) {
+            livro.setTitulo(livroDetails.getTitulo());
+            livro.setAno(livroDetails.getAno());
+            livro.setAutor(livroDetails.getAutor());
+            livro.setCategoria(livroDetails.getCategoria());
+            return livroRepository.save(livro);
+        }
+        return null;
+    }
 
+    @DeleteMapping("/{id}")
+    public void deleteLivro(@PathVariable Integer id) {
+        livroRepository.deleteById(id);
+    }
 }
+
 	
