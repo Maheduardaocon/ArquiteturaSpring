@@ -9,21 +9,12 @@ import jakarta.persistence.Table;
 
 @Entity
 @Data
-public class Livro {
+public class Autor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idLivro;
+    private Integer idAutor;
 
-    private String titulo;
-    private String ano;
-
-    @ManyToOne
-    @JoinColumn(name = "idAutor", nullable = false)
-    private Autor autor;
-
-    @ManyToOne
-    @JoinColumn(name = "idCategoria", nullable = false)
-    private Categoria categoria;
+    private String nome;
+    private String pais;
 }
-	
 }
