@@ -10,48 +10,22 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-@Entity
-@Table(name = "Livro")
+
+	@Entity
+@Data
 public class Livro {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idLivro;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	@Column
-	private String titulo;
-	@Column
-	private String ano;
-	
-	@ManyToOne (fetch = FetchType.LAZY) 
-	@JoinColumn (name = "Autor_idAutor", nullable = false)
-	private  Autor autor;
+    private String titulo;
+    private String ano;
 
-	@ManyToOne (fetch = FetchType.LAZY) 
-	@JoinColumn (name = "Categoria_idCategoria", nullable = false)
-	private  Categoria categoria;
-	
-	public Long getId() {
-		return id;
-	}
+    @ManyToOne
+    @JoinColumn(name = "idAutor", nullable = false)
+    private Autor autor;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getTitulo() {
-		return titulo;
-	}
-
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
-	}
-	
-	public String getAno() {
-		return ano;
-	}
-
-	public void setAno(String ano) {
-		this.ano = ano;
-	}
-
-}
+    @ManyToOne
+    @JoinColumn(name = "idCategoria", nullable = false)
+    private Categoria categoria;
+}}
